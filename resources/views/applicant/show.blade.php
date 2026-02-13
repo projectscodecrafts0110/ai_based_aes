@@ -23,8 +23,8 @@
             <!-- JOB INFORMATION -->
             <h5 class="fw-semibold mb-3">Job Information</h5>
             <div class="row mb-3">
-                <div class="col-md-6"><strong>Job Applying:</strong> {{ $application->job_applying }}</div>
-                <div class="col-md-6"><strong>Qualifications:</strong> {{ $application->job_qualifications }}</div>
+                <div class="col-md-6"><strong>Job Applying:</strong> {{ $application->job->title }}</div>
+                <div class="col-md-6"><strong>Qualifications:</strong> {{ $application->job->qualifications }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6"><strong>Higher Education:</strong> {{ $application->higher_education }}</div>

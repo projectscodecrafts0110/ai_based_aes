@@ -25,9 +25,10 @@ class JobVacancyController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'qualifications' => 'nullable|string',
+            'course' => 'required|string',
         ]);
 
-        JobVacancy::create($request->only('title', 'description', 'qualifications'));
+        JobVacancy::create($request->only('title', 'description', 'qualifications', 'course'));
 
         return redirect()->route('admin.job_vacancies.index')->with('success', 'Job vacancy created successfully!');
     }

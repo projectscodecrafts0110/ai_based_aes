@@ -14,7 +14,7 @@
     }
 
     #background {
-        background-image: url('{{ asset('images/signup-bg.jpg') }}');
+        background-image: url('{{ asset('images/index-bg.jpg') }}');
         background-size: cover;
         background-position: center;
     }
@@ -35,53 +35,46 @@
                         <div class="text-center mb-3">
                             <img src="{{ asset('images/ispsc_logo.png') }}" alt="ISPSC Logo" class="img-fluid"
                                 style="max-width: 20%">
-                            <h4 class="mt-2">AI-Based AES Sign Up</h3>
+                            <h4 class="mt-2">AI-Based AES Login</h3>
                         </div>
                         <hr>
-                        <form method="POST" action="{{ route('register') }}">
-                            @csrf
-
-                            <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control" value="{{ old('name') }}"
-                                    required>
-                                @error('name')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
+                        <!-- Show Sign Up Success -->
+                        @if (session('success'))
+                            <div class="alert alert-success text-center ">
+                                {{ session('success') }}
                             </div>
+                        @endif
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
 
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
                                 <input type="email" name="email" class="form-control" value="{{ old('email') }}"
-                                    required>
+                                    placeholder="Enter your email" required>
                                 @error('email')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" required>
+                                <input type="password" name="password" class="form-control"
+                                    placeholder="Enter your password" required>
                                 @error('password')
-                                    <small class="text-danger">Password Not Match</small>
+                                    <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">Confirm Password</label>
-                                <input type="password" name="password_confirmation" class="form-control" required>
-                            </div>
-
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success">
-                                    Create Account
+                                <button type="submit" class="btn btn-primary">
+                                    Login
                                 </button>
                             </div>
 
                             <div class="text-center mt-3">
                                 <small>
-                                    Already have an account?
-                                    <a href="{{ route('login') }}">Login</a>
+                                    No Account Yet?
+                                    <a href="{{ route('register') }}">Sign Up Here!</a>
                                 </small>
                             </div>
                         </form>

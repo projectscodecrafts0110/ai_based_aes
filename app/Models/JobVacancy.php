@@ -9,7 +9,7 @@ class JobVacancy extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'qualifications'];
+    protected $fillable = ['title', 'description', 'qualifications', 'course', 'is_open'];
 
     public function applications()
     {

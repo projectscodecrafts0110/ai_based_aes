@@ -24,6 +24,13 @@
             </div>
 
             <div class="mb-3">
+                <label>Course</label>
+                <input type="text" class="form-control" name="course" id="course" value="{{ old('course') }}"
+                    required>
+                <small class="text-muted">E.g., BS Computer Science, BS Midwifery</small>
+            </div>
+
+            <div class="mb-3">
                 <label for="description" class="form-label">Job Description</label>
                 <textarea class="form-control" name="description" id="description" rows="4">{{ old('description') }}</textarea>
             </div>

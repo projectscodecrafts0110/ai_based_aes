@@ -32,7 +32,7 @@ class AuthController extends Controller
         ]);
 
         // Redirect after success
-        return redirect()->route('index')
+        return redirect()->route('login')
             ->with('success', 'Account created successfully! Please log in.');
     }
 
@@ -72,6 +72,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('index');
+        return redirect()->route('login');
     }
 }
