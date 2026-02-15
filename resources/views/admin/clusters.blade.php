@@ -8,45 +8,44 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="fw-semibold mb-3">Applicant Clusters (AI Score vs Qualification Match)</h5>
-                <canvas id="clusterChart" height="400"></canvas>
+                <h5 class="fw-semibold mb-3">Applicant Clusters</h5>
+                <div style="max-height: 600px; width: 100%; overflow-x: auto;">
+                    <canvas id="clusterChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 @endsection
-
 
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const chartData = @json($chartData);
 
-        // Assign colors for clusters
-        const clusterColors = ['#28a745', '#ffc107', '#dc3545', '#007bff', '#6f42c1'];
-
-        const datasets = [];
-
-        // Group points by cluster
-        const clustersMap = {};
-        chartData.forEach(point => {
-            const c = point.cluster;
-            if (!clustersMap[c]) clustersMap[c] = [];
-            clustersMap[c].push({
-                x: point.x,
-                y: point.y,
-                label: point.label
-            });
+        const positionMap = {};
+        chartData.forEach(p => {
+            const pos = p.position;
+            if (!positionMap[pos]) positionMap[pos] = [];
+            positionMap[pos].push(p);
         });
 
-        Object.keys(clustersMap).forEach(cluster => {
-            datasets.push({
-                label: 'Cluster ' + cluster,
-                data: clustersMap[cluster],
-                backgroundColor: clusterColors[cluster % clusterColors.length],
-            });
-        });
+        const colors = ['#28a745', '#ffc107', '#dc3545', '#007bff', '#6f42c1', '#fd7e14', '#20c997', '#6610f2'];
+
+        const datasets = Object.keys(positionMap).map((position, i) => ({
+            label: position,
+            data: positionMap[position].map(p => ({
+                x: p.x,
+                y: p.y,
+                label: p.label,
+                recommendation: p.recommendation
+            })),
+            backgroundColor: colors[i % colors.length],
+            pointRadius: 12,
+            pointHoverRadius: 15
+        }));
 
         const ctx = document.getElementById('clusterChart').getContext('2d');
+
         new Chart(ctx, {
             type: 'scatter',
             data: {
@@ -59,9 +58,12 @@
                         callbacks: {
                             label: function(context) {
                                 const d = context.raw;
-                                return `${d.label}: AI Score ${d.x}, Match ${d.y}%`;
+                                return `${d.label} (${d.recommendation}): AI Score ${d.x}, Match ${d.y}%`;
                             }
                         }
+                    },
+                    legend: {
+                        position: 'top'
                     }
                 },
                 scales: {

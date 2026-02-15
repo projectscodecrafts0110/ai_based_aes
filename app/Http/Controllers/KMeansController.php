@@ -22,6 +22,8 @@ class KMeansController extends Controller
                 'x' => $app->ai_score ?? 0,
                 'y' => $app->qualification_match ?? 0,
                 'label' => $app->full_name,
+                'position' => $app->job->title ?? 'N/A',
+                'recommendation' => $app->ai_recommendation ?? 'N/A',
                 'cluster' => $clusters[$app->id] ?? 0
             ];
         });
