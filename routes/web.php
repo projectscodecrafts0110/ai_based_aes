@@ -47,7 +47,6 @@ Route::middleware('auth')->group(function () {
     // Application Routes
 
     Route::get('/apply/filter', [ApplicationController::class, 'index'])->name('apply.filter');
-    Route::get('/apply', [ApplicationController::class, 'create'])->name('apply.form');
     Route::post('/apply/form', [ApplicationController::class, 'create'])->name('apply');
     Route::post('/apply', [ApplicationController::class, 'store'])->name('applications.store');
     Route::get('/applications/status', [ApplicationController::class, 'status'])->name('applications.status');
