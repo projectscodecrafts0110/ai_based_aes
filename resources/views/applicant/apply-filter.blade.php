@@ -26,7 +26,7 @@
                             <select name="employment_status" class="form-select" required>
                                 <option value="" selected disabled>Select</option>
                                 <option value="Permanent">Permanent</option>
-                                <option value="Part-Time">Part-Time</option>
+                                <option value="Part_Time">Part-Time</option>
                             </select>
                         </div>
 
