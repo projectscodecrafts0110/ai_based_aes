@@ -28,6 +28,10 @@ class ApplicationController extends Controller
             'department' => 'nullable|string',
         ]);
 
+        if (!$request->hasAny(['job_type', 'employment_status', 'campus', 'department'])) {
+            return redirect()->route('apply.filter')->with('error', 'Please select at least one filter option.');
+        }
+
 
         $jobType = $request->input('job_type');
         $employmentStatus = $request->input('employment_status');
