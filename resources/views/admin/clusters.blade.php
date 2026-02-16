@@ -60,7 +60,9 @@
                 name: p.label,
                 recommendation: p.recommendation,
                 ai_score: p.ai_score,
-                position: p.position
+                position: p.position,
+                campus: p.campus,
+                department: p.department
             })),
             backgroundColor: recommendationColors[label],
             pointRadius: 12,
@@ -86,6 +88,8 @@
                                 return [
                                     `Name: ${d.name}`,
                                     `Job: ${d.position}`,
+                                    `Campus: ${d.campus}`,
+                                    `Department: ${d.department}`,
                                     `Recommendation: ${d.recommendation}`,
                                     `AI Score: ${d.ai_score}`,
                                     `Match: ${d.y}%`

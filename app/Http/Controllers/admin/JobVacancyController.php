@@ -8,10 +8,44 @@ use Illuminate\Http\Request;
 
 class JobVacancyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $vacancies = JobVacancy::orderBy('created_at', 'desc')->get();
-        return view('admin.job_vacancies.index', compact('vacancies'));
+        // Get filter values from query string
+        $jobType = $request->query('job_type');
+        $employmentStatus = $request->query('employment_status');
+        $campus = $request->query('campus');
+        $department = $request->query('department');
+
+        // Start query
+        $query = JobVacancy::query();
+
+        // Apply filters if present
+        if ($jobType) {
+            $query->where('job_type', $jobType);
+        }
+        if ($employmentStatus) {
+            $query->where('employment_status', $employmentStatus);
+        }
+        if ($campus) {
+            $query->where('campus', $campus);
+        }
+        if ($department) {
+            $query->where('department', $department);
+        }
+
+        // Order by newest first
+        $vacancies = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        // Pass filters back to view so dropdowns can stay selected
+        return view('admin.job_vacancies.index', [
+            'vacancies' => $vacancies,
+            'filters' => [
+                'job_type' => $jobType,
+                'employment_status' => $employmentStatus,
+                'campus' => $campus,
+                'department' => $department,
+            ]
+        ]);
     }
 
     public function create()
