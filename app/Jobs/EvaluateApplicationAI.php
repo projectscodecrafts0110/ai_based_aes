@@ -135,6 +135,7 @@ Justification:
 Education and Qualifications: <text>
 Training and Seminars: <text>
 Eligibility: <text>
+Criteria Document Analysis: <text>
 Work Experience: <text>
 Application Letter Analysis: <text>
 PDS Analysis: <text>
