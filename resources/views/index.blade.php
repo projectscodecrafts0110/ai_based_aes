@@ -84,8 +84,13 @@
                                 data-bs-target="#jobModal{{ $job->id }}" style="cursor:pointer;">
                                 <div class="card-body">
                                     <h5>{{ $job->title }}</h5>
+                                    @php
+                                        $qualifications = is_array($job->qualifications)
+                                            ? $job->qualifications
+                                            : json_decode($job->qualifications, true);
+                                    @endphp
                                     <p class="text-muted small">
-                                        {{ Str::limit($job->qualifications, 90) }}
+                                        {{ Str::limit($qualifications['education'] ?? 'N/A', 60) }}
                                     </p>
                                     <span class="badge bg-success">
                                         <i class="bi bi-check-circle"></i> Open
@@ -105,9 +110,13 @@
                                     <div class="modal-body">
                                         <h6><i class="bi bi-list-check"></i> Qualifications</h6>
                                         <ul>
-                                            @foreach (explode(',', $job->qualifications) as $qualification)
-                                                <li>{{ trim($qualification) }}</li>
-                                            @endforeach
+                                            <li><strong>Education:</strong> {{ $qualifications['education'] ?? 'N/A' }}
+                                            </li>
+                                            <li><strong>Experience:</strong> {{ $qualifications['experience'] ?? 'N/A' }}
+                                            </li>
+                                            <li><strong>Training:</strong> {{ $qualifications['training'] ?? 'N/A' }} </li>
+                                            <li><strong>Eligibility:</strong> {{ $qualifications['eligibility'] ?? 'N/A' }}
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="modal-footer">
