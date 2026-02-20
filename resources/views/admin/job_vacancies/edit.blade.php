@@ -64,10 +64,22 @@
             </div>
 
             <div class="mb-3">
-                <label>Course</label>
-                <input type="text" class="form-control" name="course" id="course"
-                    value="{{ old('course', $jobVacancy->course) }}" required>
-                <small class="text-muted">E.g., BS Computer Science, BS Midwifery</small>
+                <label for="course" class="form-label">Course</label>
+                <select name="course" id="course" class="form-control" required>
+                    <option value="">Select Course</option>
+                    @foreach ($courses as $course)
+                        <option value="{{ $course->course }}"
+                            {{ old('course', $jobVacancy->course) == $course->course ? 'selected' : '' }}>
+                            {{ $course->course }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="available_positions" class="form-label">Available Positions</label>
+                <input type="number" class="form-control" name="available_positions" id="available_positions"
+                    min="1" value="{{ old('available_positions', $jobVacancy->available_positions) }}" required>
             </div>
 
             <div class="mb-3">
@@ -76,9 +88,37 @@
             </div>
 
             <div class="mb-3">
-                <label for="qualifications" class="form-label">Qualifications (comma-separated)</label>
-                <textarea class="form-control" name="qualifications" id="qualifications" rows="3">{{ old('qualifications', $jobVacancy->qualifications) }}</textarea>
-                <small class="text-muted">E.g., Bachelor's Degree, PHP, Laravel</small>
+                <label class="form-label fw-bold">Qualifications</label>
+                @php
+                    $qualifications = $jobVacancy->qualifications;
+                @endphp
+                <div class="mb-3">
+                    <label for="education" class="form-label">Education</label>
+                    <input type="text" class="form-control" name="education" id="education"
+                        value="{{ old('education', $qualifications['education'] ?? '') }}" required>
+                    <small class="text-muted">E.g., Bachelor's Degree in Computer Science</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="experience" class="form-label">Experience</label>
+                    <input type="text" class="form-control" name="experience" id="experience"
+                        value="{{ old('experience', $qualifications['experience'] ?? '') }}" required>
+                    <small class="text-muted">E.g., 2+ years teaching experience</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="training" class="form-label">Training</label>
+                    <input type="text" class="form-control" name="training" id="training"
+                        value="{{ old('training', $qualifications['training'] ?? '') }}">
+                    <small class="text-muted">E.g., Relevant seminars and certifications</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="eligibility" class="form-label">Eligibility</label>
+                    <input type="text" class="form-control" name="eligibility" id="eligibility"
+                        value="{{ old('eligibility', $qualifications['eligibility'] ?? '') }}">
+                    <small class="text-muted">E.g., Licensed Professional Teacher (LET Passer)</small>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary">Update Job Vacancy</button>

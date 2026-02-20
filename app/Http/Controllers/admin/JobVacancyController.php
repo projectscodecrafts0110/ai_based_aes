@@ -96,7 +96,8 @@ class JobVacancyController extends Controller
 
     public function edit(JobVacancy $jobVacancy)
     {
-        return view('admin.job_vacancies.edit', compact('jobVacancy'));
+        $courses = AlliedCourse::all()->sortBy('course');
+        return view('admin.job_vacancies.edit', compact('jobVacancy', 'courses'));
     }
 
     public function update(Request $request, JobVacancy $jobVacancy)
@@ -104,15 +105,26 @@ class JobVacancyController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'qualifications' => 'nullable|string',
             'course' => 'required|string',
             'job_type' => 'required|string',
             'employment_status' => 'required|string',
             'campus' => 'required|string',
             'department' => 'required|string',
+            'education' => 'required|string|max:255',
+            'experience' => 'required|string|max:255',
+            'training' => 'nullable|string|max:255',
+            'eligibility' => 'nullable|string|max:255',
+            'available_positions' => 'required|integer|min:1',
         ]);
 
-        $jobVacancy->update($request->only('title', 'description', 'qualifications', 'course', 'job_type', 'employment_status', 'campus', 'department'));
+        $jobVacancy->update($request->only('title', 'description', 'qualifications', 'course', 'job_type', 'employment_status', 'campus', 'department', 'available_positions') + [
+            'qualifications' => [
+                'education' => $request->education,
+                'experience' => $request->experience,
+                'training' => $request->training,
+                'eligibility' => $request->eligibility,
+            ],
+        ]);
 
         return redirect()->route('admin.job_vacancies.index')->with('success', 'Job vacancy updated successfully!');
     }

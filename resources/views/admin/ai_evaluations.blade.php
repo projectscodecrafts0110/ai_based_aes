@@ -64,82 +64,118 @@
                         <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="aiSummaryLabel{{ $app->id }}">AI Evaluation Summary -
-                                        {{ $app->full_name }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                                    <h5 class="modal-title" id="aiSummaryLabel{{ $app->id }}">
+                                        AI Evaluation Summary - {{ $app->full_name }}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
+
                                 <div class="modal-body">
-                                    <!-- AI Evaluation Info -->
+
+                                    {{-- AI Info --}}
                                     <p><strong>AI Score:</strong> {{ $app->ai_score ?? 'N/A' }}</p>
-                                    <p><strong>Qualification Match:</strong> {{ $app->qualification_match ?? 'N/A' }}%</p>
+                                    <p><strong>Qualification Match:</strong>
+                                        {{ $app->qualification_match ? $app->qualification_match . '%' : 'N/A' }}
+                                    </p>
                                     <p><strong>AI Recommendation:</strong> {{ $app->ai_recommendation ?? 'N/A' }}</p>
+
                                     <hr>
+
                                     <p><strong>Justification / AI Summary:</strong></p>
-                                    <p>{{ $app->ai_summary ?? 'No summary available.' }}</p>
+                                    <p>{!! nl2br(e($app->ai_summary ?? 'No summary available.')) !!}</p>
 
                                     <hr>
                                     <p><strong>Uploaded Documents:</strong></p>
 
-                                    <!-- Carousel -->
-                                    <div id="carousel{{ $app->id }}" class="carousel slide" data-bs-ride="carousel">
-                                        <div class="carousel-inner">
+                                    @php
+                                        $files = [];
 
-                                            @php
-                                                $files = [
-                                                    'Application Letter' => $app->application_letter,
-                                                    'Resume' => $app->resume,
-                                                    'PDS' => $app->pds,
-                                                    'OTR' => $app->otr,
-                                                ];
+                                        // Single file fields (only if not empty)
+                                        if (!empty($app->application_letter)) {
+                                            $files['Application Letter'] = $app->application_letter;
+                                        }
 
-                                                if ($app->certificates) {
-                                                    foreach ($app->certificates as $index => $cert) {
-                                                        $files['Certificate ' . ($index + 1)] = $cert;
-                                                    }
+                                        if (!empty($app->pds)) {
+                                            $files['PDS'] = $app->pds;
+                                        }
+
+                                        if (!empty($app->otr_diploma)) {
+                                            $files['OTR/Diploma'] = $app->otr_diploma;
+                                        }
+
+                                        if (!empty($app->certificate_eligibility)) {
+                                            $files['Certificate Eligibility'] = $app->certificate_eligibility;
+                                        }
+
+                                        // Multiple certificates (array safe)
+                                        if (
+                                            !empty($app->certificates_training) &&
+                                            is_array($app->certificates_training)
+                                        ) {
+                                            foreach ($app->certificates_training as $index => $cert) {
+                                                if (!empty($cert)) {
+                                                    $files['Certificate ' . ($index + 1)] = $cert;
                                                 }
-                                            @endphp
+                                            }
+                                        }
+                                    @endphp
 
-                                            @foreach ($files as $label => $file)
-                                                <div class="carousel-item @if ($loop->first) active @endif">
-                                                    <h6 class="text-center">{{ $label }}</h6>
+                                    @if (count($files) > 0)
+                                        <div id="carousel{{ $app->id }}" class="carousel slide"
+                                            data-bs-ride="carousel">
+                                            <div class="carousel-inner">
 
+                                                @foreach ($files as $label => $file)
                                                     @php
-                                                        $ext = pathinfo($file, PATHINFO_EXTENSION);
+                                                        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
                                                         $fileUrl = asset('storage/' . $file);
                                                     @endphp
 
-                                                    @if (in_array($ext, ['pdf']))
-                                                        <embed src="{{ $fileUrl }}" type="application/pdf"
-                                                            width="100%" height="500px">
-                                                    @elseif(in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
-                                                        <img src="{{ $fileUrl }}" class="d-block w-100"
-                                                            alt="{{ $label }}">
-                                                    @else
-                                                        <p class="text-center">
-                                                            <a href="{{ $fileUrl }}" target="_blank">View
-                                                                {{ $label }}</a>
-                                                        </p>
-                                                    @endif
-                                                </div>
-                                            @endforeach
+                                                    <div
+                                                        class="carousel-item @if ($loop->first) active @endif">
+                                                        <h6 class="text-center">{{ $label }}</h6>
 
+                                                        @if ($ext === 'pdf')
+                                                            <embed src="{{ $fileUrl }}" type="application/pdf"
+                                                                width="100%" height="500px">
+                                                        @elseif(in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
+                                                            <img src="{{ $fileUrl }}" class="d-block w-100"
+                                                                alt="{{ $label }}">
+                                                        @else
+                                                            <p class="text-center">
+                                                                <a href="{{ $fileUrl }}" target="_blank">
+                                                                    View {{ $label }}
+                                                                </a>
+                                                            </p>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+
+                                            </div>
+
+                                            {{-- Controls --}}
+                                            @if (count($files) > 1)
+                                                <button class="carousel-control-prev" type="button"
+                                                    data-bs-target="#carousel{{ $app->id }}" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon"></span>
+                                                </button>
+
+                                                <button class="carousel-control-next" type="button"
+                                                    data-bs-target="#carousel{{ $app->id }}" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon"></span>
+                                                </button>
+                                            @endif
                                         </div>
-                                        <button class="carousel-control-prev" type="button"
-                                            data-bs-target="#carousel{{ $app->id }}" data-bs-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Previous</span>
-                                        </button>
-                                        <button class="carousel-control-next" type="button"
-                                            data-bs-target="#carousel{{ $app->id }}" data-bs-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Next</span>
-                                        </button>
-                                    </div>
+                                    @else
+                                        <p class="text-muted text-center">No documents uploaded.</p>
+                                    @endif
 
                                 </div>
+
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
                                 </div>
                             </div>
                         </div>
