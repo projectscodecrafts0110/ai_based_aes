@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
                 'email' => $adminEmail,
                 'password' => Hash::make('aes@ispscadmin'), // Change after first login
                 'role' => 'admin', // Assign admin role
+                'otp_verified' => true,
             ]);
 
             $this->command->info('Admin user created: ' . $adminEmail . ' / aes@ispscadmin');

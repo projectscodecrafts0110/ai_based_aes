@@ -47,9 +47,10 @@
                     <div class="mb-3">
                         <label for="job_id" class="form-label">Job Applying</label>
                         <select class="form-select" id="job_id" name="job_id" required>
-                            <option value="" disabled selected>Select a position</option>
                             @foreach ($jobs as $job)
-                                <option value="{{ $job->id }}">{{ $job->title }}</option>
+                                <option value="{{ $job->id }}" selected>
+                                    {{ $job->title }}
+                                </option>
                             @endforeach
                         </select>
 

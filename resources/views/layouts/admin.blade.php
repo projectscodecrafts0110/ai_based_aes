@@ -62,7 +62,7 @@
             max-width: 220px;
             height: calc(100vh - 56px);
             /* 56px = navbar height */
-            background-color: var(--aes-light);
+            background-color: var(--aes-gold);
             position: sticky;
             top: 56px;
         }
@@ -155,20 +155,33 @@
             <ul class="nav flex-column">
 
                 <li class="nav-item mb-2">
-                    <a href="{{ route('admin.applications') }}" class="nav-link">View Applications</a>
+                    <a href="{{ route('admin.job_vacancies.index') }}" class="nav-link">
+                        <i class="bi bi-briefcase-fill me-2"></i>
+                        Job Vacancy
+                    </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="{{ route('admin.ai-evaluations') }}" class="nav-link">Initial Evaluation</a>
+                    <a href="{{ route('admin.applications') }}" class="nav-link">
+                        <i class="bi bi-file-earmark-text-fill me-2"></i>
+                        View Applications
+                    </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="{{ route('admin.job_vacancies.index') }}" class="nav-link">Manage Job Vacancy</a>
+                    <a href="{{ route('admin.ai-evaluations') }}" class="nav-link">
+                        <i class="bi bi-cpu-fill me-2"></i>
+                        Initial Evaluation
+                    </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="{{ route('admin.kmeans.index') }}" class="nav-link">Ranks</a>
+                    <a href="{{ route('admin.kmeans.index') }}" class="nav-link">
+                        <i class="bi bi-diagram-3-fill me-2"></i>
+                        Ranks
+                    </a>
                 </li>
+
             </ul>
         </aside>
 

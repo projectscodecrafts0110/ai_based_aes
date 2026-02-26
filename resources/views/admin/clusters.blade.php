@@ -91,7 +91,6 @@
                                     `Campus: ${d.campus}`,
                                     `Department: ${d.department}`,
                                     `Recommendation: ${d.recommendation}`,
-                                    `AI Score: ${d.ai_score}`,
                                     `Match: ${d.y}%`
                                 ];
                             }

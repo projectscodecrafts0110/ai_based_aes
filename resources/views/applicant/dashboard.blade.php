@@ -69,6 +69,28 @@
             <!-- RIGHT: AVAILABLE POSITIONS -->
             <div class="col-lg-4 border-start d-flex flex-column h-100">
                 <div class="py-4 px-3 flex-grow-1 overflow-auto">
+                    <form method="GET" action="{{ route('dashboard') }}" class="mb-3">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-10">
+                                <label class="form-label small">Filter by School Year</label>
+                                <select name="school_year" class="form-select form-select-sm">
+                                    <option value="">All School Years</option>
+                                    @foreach ($schoolYears as $sy)
+                                        <option value="{{ $sy }}"
+                                            {{ request('school_year') == $sy ? 'selected' : '' }}>
+                                            {{ $sy }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <button class="btn btn-sm btn-success w-100">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                     <h5 class="fw-semibold mb-1">Available Positions</h5>
                     <p class="text-muted small mb-3">
                         Click on a position to view full details and apply.
@@ -143,8 +165,10 @@
                                             </div>
                                             <div class="modal-footer">
                                                 @if ($position->is_open)
-                                                    <a href="{{ route('apply.filter') }}" class="btn btn-primary">Apply
-                                                        Now</a>
+                                                    <a href="{{ route('apply.form', $position->id) }}"
+                                                        class="btn btn-primary">
+                                                        Apply Now
+                                                    </a>
                                                 @endif
                                                 <button type="button" class="btn btn-secondary"
                                                     data-bs-dismiss="modal">Close</button>

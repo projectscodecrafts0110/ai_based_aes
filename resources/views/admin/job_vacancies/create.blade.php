@@ -44,6 +44,12 @@
                 </select>
             </div>
 
+            <div class="col-md-4">
+                <label class="form-label">School Year</label>
+                <input type="text" name="school_year" class="form-control" placeholder="e.g. 2025-2026"
+                    value="{{ old('school_year', $job->school_year ?? '') }}" required>
+            </div>
+
             <div class="mb-3">
                 <label for="campus" class="form-label">Campus</label>
                 <input type="text" class="form-control" name="campus" id="campus" value="{{ old('campus') }}"

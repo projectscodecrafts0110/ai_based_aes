@@ -66,8 +66,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.courses.show.update', $course->id) }}"
-                                        class="btn btn-sm btn-warning">
+                                    <a href="" class="btn btn-sm btn-warning" data-toggle="tooltip"
+                                        data-placement="top" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -76,7 +76,8 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Delete this course?')">
+                                            onclick="return confirm('Delete this course?')" data-toggle="tooltip"
+                                            data-placement="top" title="Delete">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

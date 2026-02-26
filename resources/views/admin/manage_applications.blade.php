@@ -3,7 +3,71 @@
 @section('content')
     <div class="container py-5">
         <h2 class="fw-bold mb-4">Manage Applicants</h2>
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ route('admin.applications') }}" class="row g-3">
 
+                    {{-- Application Status --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Application Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">All</option>
+                            @foreach (['Pending', 'Under Review', 'Approved', 'Rejected'] as $status)
+                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                    {{ $status }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Job Applied --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Job Applied</label>
+                        <select name="job_id" class="form-select">
+                            <option value="">All</option>
+                            @foreach ($jobs as $job)
+                                <option value="{{ $job->id }}" {{ request('job_id') == $job->id ? 'selected' : '' }}>
+                                    {{ $job->title }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Campus --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Campus</label>
+                        <select name="campus" class="form-select">
+                            <option value="">All</option>
+                            @foreach ($campuses as $campus)
+                                <option value="{{ $campus }}" {{ request('campus') == $campus ? 'selected' : '' }}>
+                                    {{ $campus }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Department --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Department</label>
+                        <select name="department" class="form-select">
+                            <option value="">All</option>
+                            @foreach ($departments as $dept)
+                                <option value="{{ $dept }}"
+                                    {{ request('department') == $dept ? 'selected' : '' }}>
+                                    {{ $dept }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{{ route('admin.applications') }}" class="btn btn-outline-secondary">Reset</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
@@ -19,7 +83,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($applications as $index => $app)
+                    @forelse ($applications as $index => $app)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $app->full_name }}</td>
@@ -46,33 +110,17 @@
                                     class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i
+                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"
+                                        data-toggle="tooltip" data-placement="top" title="Delete"><i
                                             class="bi bi-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
-
-                        <!-- AI Details Modal -->
-                        {{-- <div class="modal fade" id="aiModal{{ $app->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">AI Evaluation for {{ $app->full_name }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p><strong>Score:</strong> {{ $app->ai_score ?? '-' }}</p>
-                                        <p><strong>Recommendation:</strong> {{ $app->ai_recommendation ?? '-' }}</p>
-                                        <p><strong>Justification:</strong> {{ $app->ai_summary ?? '-' }}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">No job vacancies found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

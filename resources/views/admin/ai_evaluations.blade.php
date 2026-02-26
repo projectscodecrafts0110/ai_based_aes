@@ -5,7 +5,71 @@
 @section('content')
     <div class="container py-5">
         <h2 class="fw-bold mb-4">Initial Evaluation Results</h2>
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ route('admin.ai-evaluations') }}" class="row g-3">
 
+                    {{-- Application Status --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Application Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">All</option>
+                            @foreach (['Pending', 'Under Review', 'Approved', 'Rejected'] as $status)
+                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                    {{ $status }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Job Applied --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Job Applied</label>
+                        <select name="job_id" class="form-select">
+                            <option value="">All</option>
+                            @foreach ($jobs as $job)
+                                <option value="{{ $job->id }}" {{ request('job_id') == $job->id ? 'selected' : '' }}>
+                                    {{ $job->title }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Campus --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Campus</label>
+                        <select name="campus" class="form-select">
+                            <option value="">All</option>
+                            @foreach ($campuses as $campus)
+                                <option value="{{ $campus }}" {{ request('campus') == $campus ? 'selected' : '' }}>
+                                    {{ $campus }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Department --}}
+                    <div class="col-md-3">
+                        <label class="form-label">Department</label>
+                        <select name="department" class="form-select">
+                            <option value="">All</option>
+                            @foreach ($departments as $dept)
+                                <option value="{{ $dept }}"
+                                    {{ request('department') == $dept ? 'selected' : '' }}>
+                                    {{ $dept }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{{ route('admin.ai-evaluations') }}" class="btn btn-outline-secondary">Reset</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
         <table class="table table-bordered table-hover table-fixed">
             <thead>
                 <tr class="text-center">
@@ -19,7 +83,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($applications as $index => $app)
+                @forelse ($applications as $index => $app)
                     <tr>
                         <td>{{ $app->full_name }}</td>
                         <td>{{ $app->job->title }}</td>
@@ -41,7 +105,8 @@
                             <!-- View AI Summary Modal Trigger -->
                             <button class="btn btn-sm btn-info" data-bs-toggle="modal"
                                 data-bs-target="#aiSummaryModal{{ $app->id }}">
-                                <i class="bi bi-eye"></i>
+                                <i class="bi bi-eye" data-toggle="tooltip" data-placement="top"
+                                    title="View More Details"></i>
                             </button>
 
                             <!-- Actions -->
@@ -49,11 +114,14 @@
                                 class="d-inline">
                                 @csrf
                                 <button name="status" value="Approved" class="btn btn-sm btn-success"><i
-                                        class="bi bi-check-circle"></i></button>
+                                        class="bi bi-check-circle" data-toggle="tooltip" data-placement="top"
+                                        title="Approve"></i></button>
                                 <button name="status" value="Under Review" class="btn btn-sm btn-primary"><i
-                                        class="bi bi-clock"></i></button>
+                                        class="bi bi-clock" data-toggle="tooltip" data-placement="top"
+                                        title="Mark as Under Review"></i></button>
                                 <button name="status" value="Rejected" class="btn btn-sm btn-danger"><i
-                                        class="bi bi-x-circle"></i></button>
+                                        class="bi bi-x-circle" data-toggle="tooltip" data-placement="top"
+                                        title="Reject"></i></button>
                             </form>
                         </td>
                     </tr>
@@ -73,15 +141,14 @@
                                 <div class="modal-body">
 
                                     {{-- AI Info --}}
-                                    <p><strong>AI Score:</strong> {{ $app->ai_score ?? 'N/A' }}</p>
                                     <p><strong>Qualification Match:</strong>
                                         {{ $app->qualification_match ? $app->qualification_match . '%' : 'N/A' }}
                                     </p>
-                                    <p><strong>AI Recommendation:</strong> {{ $app->ai_recommendation ?? 'N/A' }}</p>
-
+                                    <p><strong>Recommendation:</strong> {{ $app->ai_recommendation ?? 'N/A' }}</p>
+                                    <p><strong>Evaluated at:</strong> {{ $app->ai_evaluated_at }}</p>
                                     <hr>
 
-                                    <p><strong>Justification / AI Summary:</strong></p>
+                                    <p><strong>Justification:</strong></p>
                                     <p>{!! nl2br(e($app->ai_summary ?? 'No summary available.')) !!}</p>
 
                                     <hr>
@@ -180,9 +247,12 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center">No job vacancies found.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
-
     </div>
 @endsection

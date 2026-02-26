@@ -23,8 +23,8 @@
                             <option value="">All</option>
                             <option value="Teaching" {{ ($filters['job_type'] ?? '') == 'Teaching' ? 'selected' : '' }}>
                                 Teaching</option>
-                            <option value="Non-Teaching"
-                                {{ ($filters['job_type'] ?? '') == 'Non-Teaching' ? 'selected' : '' }}>Non-Teaching</option>
+                            <option value="Non_Teaching"
+                                {{ ($filters['job_type'] ?? '') == 'Non_Teaching' ? 'selected' : '' }}>Non-Teaching</option>
                         </select>
                     </div>
 
@@ -104,7 +104,8 @@
 
                         <!-- ACTIONS -->
                         <td>
-                            <a href="{{ route('admin.job_vacancies.edit', $vacancy) }}" class="btn btn-sm btn-warning">
+                            <a href="{{ route('admin.job_vacancies.edit', $vacancy) }}" class="btn btn-sm btn-warning"
+                                data-toggle="tooltip" data-placement="top" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
 
@@ -114,7 +115,9 @@
                                 @csrf
                                 @method('PUT')
                                 <button type="submit"
-                                    class="btn btn-sm {{ $vacancy->is_open ? 'btn-secondary' : 'btn-success' }}">
+                                    class="btn btn-sm {{ $vacancy->is_open ? 'btn-secondary' : 'btn-success' }}"
+                                    data-toggle="tooltip" data-placement="top"
+                                    title="{{ $vacancy->is_open ? 'Close' : 'Open' }}">
                                     <i class="bi {{ $vacancy->is_open ? 'bi-lock-fill' : 'bi-unlock-fill' }}"></i>
                                 </button>
                             </form>
@@ -124,7 +127,8 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger"
-                                    onclick="return confirm('Are you sure you want to delete this job?')">
+                                    onclick="return confirm('Are you sure you want to delete this job?')"
+                                    data-toggle="tooltip" data-placement="top" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>

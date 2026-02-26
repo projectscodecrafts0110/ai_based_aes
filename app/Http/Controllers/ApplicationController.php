@@ -63,14 +63,14 @@ class ApplicationController extends Controller
         return view('applicant.apply', compact('jobs', 'noRelatedJobs'));
     }
 
-    public function showForm(Request $request)
+    public function showForm(JobVacancy $job)
     {
-        $jobs = collect();
-        $noRelatedJobs = false;
+        if (!$job->is_open) {
+            abort(404);
+        }
 
-        // if (!$request->hasAny(['job_type', 'employment_status', 'campus', 'department'])) {
-        //     return redirect()->route('apply.filter')->with('error', 'Please select at least one filter option.');
-        // }
+        $jobs = collect([$job]); // important
+        $noRelatedJobs = false;
 
         return view('applicant.apply', compact('jobs', 'noRelatedJobs'));
     }

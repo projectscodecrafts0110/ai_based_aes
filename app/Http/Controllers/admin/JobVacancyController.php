@@ -70,6 +70,7 @@ class JobVacancyController extends Controller
             'training' => 'nullable|string|max:255',
             'eligibility' => 'nullable|string|max:255',
             'available_positions' => 'required|integer|min:1',
+            'school_year' => 'required|string|max:255',
         ]);
 
         JobVacancy::create([
@@ -87,6 +88,7 @@ class JobVacancyController extends Controller
                 'training' => $request->training,
                 'eligibility' => $request->eligibility,
             ],
+            'school_year' => $request->school_year,
         ]);
 
         return redirect()
@@ -115,9 +117,10 @@ class JobVacancyController extends Controller
             'training' => 'nullable|string|max:255',
             'eligibility' => 'nullable|string|max:255',
             'available_positions' => 'required|integer|min:1',
+            'school_year' => 'required|string|max:255',
         ]);
 
-        $jobVacancy->update($request->only('title', 'description', 'qualifications', 'course', 'job_type', 'employment_status', 'campus', 'department', 'available_positions') + [
+        $jobVacancy->update($request->only('title', 'description', 'qualifications', 'course', 'job_type', 'employment_status', 'campus', 'department', 'available_positions', 'school_year') + [
             'qualifications' => [
                 'education' => $request->education,
                 'experience' => $request->experience,

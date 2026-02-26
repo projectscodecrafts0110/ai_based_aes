@@ -93,33 +93,9 @@
             </ul>
 
             <hr>
-            {{-- 
-            <!-- EVALUATION -->
-            <h5 class="fw-semibold mb-3">Evaluation</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Ratings:</strong> {{ $application->ratings ?? 'Not Evaluated' }}
-                </div>
-                <div class="col-md-6">
-                    <strong>Status:</strong>
-                    @php
-                        $status = $application->status;
-                        $badgeClass = match ($status) {
-                            'Pending' => 'bg-warning text-dark',
-                            'Under Review' => 'bg-primary',
-                            'Approved' => 'bg-success',
-                            'Rejected' => 'bg-danger',
-                            default => 'bg-secondary',
-                        };
-                    @endphp
-                    <span class="badge {{ $badgeClass }}">{{ $status }}</span>
-                </div>
-            </div> --}}
-
-            <hr>
 
             <!-- AI EVALUATION -->
-            <h5 class="fw-semibold mb-3">AI Evaluation</h5>
+            <h5 class="fw-semibold mb-3">Evaluation Summary</h5>
 
             @if ($application->ai_score !== null)
                 @php
@@ -132,17 +108,18 @@
                 @endphp
 
                 <div class="row mb-3">
-                    <div class="col-md-4">
-                        <strong>AI Score:</strong>
-                        <span class="badge bg-info text-dark ms-2">
-                            {{ $application->ai_score }}/100
-                        </span>
-                    </div>
 
                     <div class="col-md-4">
                         <strong>Recommendation:</strong>
                         <span class="badge {{ $aiBadge }} ms-2">
                             {{ $application->ai_recommendation }}
+                        </span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <strong>Qualification Match:</strong>
+                        <span class="badge {{ $aiBadge }} ms-2">
+                            {{ $application->qualification_match }}%
                         </span>
                     </div>
 
@@ -154,7 +131,7 @@
 
                 @if ($application->ai_summary)
                     <div class="alert alert-light border">
-                        <strong>AI Summary:</strong>
+                        <strong>Justification</strong>
                         <p class="mb-0 mt-2 text-muted">
                             {!! nl2br(e($application->ai_summary)) !!}
                         </p>

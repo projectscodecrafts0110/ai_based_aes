@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Services\KMeansService;
+use App\Models\JobVacancy;
 
 class AdminController extends Controller
 {
@@ -39,10 +40,47 @@ class AdminController extends Controller
         ));
     }
 
-    public function manageApplications()
+    public function manageApplications(Request $request)
     {
-        $applications = \App\Models\Application::orderBy('created_at', 'desc')->get();
-        return view('admin.manage_applications', compact('applications'));
+        $query = Application::with('job');
+
+        // Filter by Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by Job
+        if ($request->filled('job_id')) {
+            $query->where('job_id', $request->job_id);
+        }
+
+        // Filter by Campus (from related job)
+        if ($request->filled('campus')) {
+            $query->whereHas('job', function ($q) use ($request) {
+                $q->where('campus', $request->campus);
+            });
+        }
+
+        // Filter by Department (from related job)
+        if ($request->filled('department')) {
+            $query->whereHas('job', function ($q) use ($request) {
+                $q->where('department', $request->department);
+            });
+        }
+
+        $applications = $query->latest()->get();
+
+        // For dropdowns
+        $jobs = JobVacancy::select('id', 'title')->get();
+        $campuses = JobVacancy::pluck('campus')->unique();
+        $departments = JobVacancy::pluck('department')->unique();
+
+        return view('admin.manage_applications', compact(
+            'applications',
+            'jobs',
+            'campuses',
+            'departments'
+        ));
     }
 
     public function deleteApplication(Application $application)
@@ -51,13 +89,47 @@ class AdminController extends Controller
         return redirect()->route('admin.applications')->with('success', 'Application deleted successfully.');
     }
 
-    public function aiEvaluations(KMeansService $kMeans)
+    public function aiEvaluations(Request $request)
     {
-        $applications = Application::with('job')->orderByDesc('ai_score')->get();
+        $query = Application::with('job');
 
-        return view('admin.ai_evaluations', [
-            'applications' => $applications
-        ]);
+        // Filter by Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by Job
+        if ($request->filled('job_id')) {
+            $query->where('job_id', $request->job_id);
+        }
+
+        // Filter by Campus (from related job)
+        if ($request->filled('campus')) {
+            $query->whereHas('job', function ($q) use ($request) {
+                $q->where('campus', $request->campus);
+            });
+        }
+
+        // Filter by Department (from related job)
+        if ($request->filled('department')) {
+            $query->whereHas('job', function ($q) use ($request) {
+                $q->where('department', $request->department);
+            });
+        }
+
+        $applications = $query->latest()->get();
+
+        // For dropdowns
+        $jobs = JobVacancy::select('id', 'title')->get();
+        $campuses = JobVacancy::pluck('campus')->unique();
+        $departments = JobVacancy::pluck('department')->unique();
+
+        return view('admin.ai_evaluations', compact(
+            'applications',
+            'jobs',
+            'campuses',
+            'departments'
+        ));
     }
 
 

@@ -9,7 +9,7 @@ class JobVacancy extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'qualifications', 'course', 'is_open', 'job_type', 'employment_status', 'campus', 'department', 'available_positions'];
+    protected $fillable = ['title', 'description', 'qualifications', 'course', 'is_open', 'job_type', 'employment_status', 'campus', 'department', 'available_positions', 'school_year'];
 
     protected $casts = [
         'qualifications' => 'array',
