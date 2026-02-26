@@ -81,7 +81,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/job_vacancies/courses', [AlliedCourseController::class, 'index'])->name('admin.courses');
     Route::get('/admin/job_vacancies/courses/create', [AlliedCourseController::class, 'create'])->name('admin.courses.create');
-    Route::post('/admin/job_vacancies/courses', [AlliedCourseController::class, 'store'])->name('admin.courses.store');
+    Route::post('/admin/job_vacancies/courses/store', [AlliedCourseController::class, 'store'])->name('admin.courses.store');
+    Route::get('/admin/job_vacancies/courses/update/{course}', [AlliedCourseController::class, 'editPage'])->name('admin.courses.show.update');
+    Route::put('/admin/job_vacancies/courses/{course}', [AlliedCourseController::class, 'update'])->name('admin.courses.update');
+    Route::delete('/admin/job_vacancies/courses/{course}/delete', [AlliedCourseController::class, 'destroy'])->name('admin.courses.destroy');
 
     Route::get('/admin/rankings', [KMeansController::class, 'index'])->name('admin.kmeans.index');
 });

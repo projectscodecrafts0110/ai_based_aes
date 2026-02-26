@@ -35,4 +35,36 @@ class AlliedCourseController extends Controller
             ->route('admin.courses')
             ->with('success', 'Course created successfully!');
     }
+
+    public function editPage(AlliedCourse $course)
+    {
+        return view('admin.job_vacancies.edit_course', compact('course'));
+    }
+
+    public function update(Request $request, AlliedCourse $course)
+    {
+        $request->validate([
+            'course' => 'required|string|max:255',
+            'allied' => 'nullable|array',
+            'allied.*' => 'nullable|string|max:255',
+        ]);
+
+        $course->update([
+            'course' => $request->course,
+            'allied' => array_filter($request->allied), // remove empty values
+        ]);
+
+        return redirect()
+            ->route('admin.courses')
+            ->with('success', 'Course updated successfully!');
+    }
+
+    public function destroy(AlliedCourse $course)
+    {
+        $course->delete();
+
+        return redirect()
+            ->route('admin.courses')
+            ->with('success', 'Course deleted successfully!');
+    }
 }

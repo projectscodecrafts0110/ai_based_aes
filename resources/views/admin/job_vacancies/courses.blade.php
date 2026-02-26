@@ -66,11 +66,13 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('admin.courses.show.update', $course->id) }}"
+                                        class="btn btn-sm btn-warning">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
-                                    <form action="" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.courses.destroy', $course->id) }}" method="POST"
+                                        class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"
