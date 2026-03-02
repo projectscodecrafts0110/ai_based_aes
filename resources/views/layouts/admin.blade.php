@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="icon" href="{{ asset('images/smarthire.png') }}">
     <title>@yield('title', 'Admin - SMARTHIRE')</title>
 
     <!-- Bootstrap CSS -->
@@ -62,13 +62,13 @@
             max-width: 220px;
             height: calc(100vh - 56px);
             /* 56px = navbar height */
-            background-color: var(--aes-gold);
+            background-color: var(--aes-maroon);
             position: sticky;
             top: 56px;
         }
 
         #sidebar .nav-link {
-            color: #000;
+            color: #ffffff;
             font-weight: 500;
             padding: 0.6rem 0.75rem;
             border-radius: 6px;
@@ -117,7 +117,8 @@
         <div class="container-fluid">
 
             <a class="navbar-brand fw-bold" href="#">
-                Admin - SMARTHIRE
+                <img src="{{ asset('images/smarthire.png') }}" class="img-fluid" alt="" style="width: 60px;">
+                ADMIN - SMARTHIRE
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar"

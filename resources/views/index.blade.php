@@ -9,8 +9,8 @@
         <div class="row align-items-center w-100">
 
             <div class="col-md-6">
-                <div class="">
-                    <img src="{{ asset('images/ispsc_logo.png') }}" alt="" class="mb-2 img-fluid" style="width:120px;">
+                <div class="d-flex row">
+                    <img src="{{ asset('images/smarthire.png') }}" alt="" class="mb-2 img-fluid" style="width:200px;">
                 </div>
                 <h1 class="fw-bold display-5">
                     SMARTHIRE
@@ -40,18 +40,21 @@
 
     <!-- CAROUSEL -->
     <div id="campusCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
-        <div class="carousel-inner" style="max-height:450px;">
+        <div class="carousel-inner" style="max-height:500px;">
             <div class="carousel-item active">
-                <img src="https://plus.unsplash.com/premium_photo-1676666379051-383ed1b005e8?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    class="d-block w-100">
+                <img src="{{ asset('images/landing/img1.jpg') }}" class="d-block w-100">
             </div>
             <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1487528278747-ba99ed528ebc?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    class="d-block w-100">
+                <img src="{{ asset('images/landing/img2.jpg') }}" class="d-block w-100">
             </div>
             <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1762330463032-06f873b3277c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    class="d-block w-100">
+                <img src="{{ asset('images/landing/img3.jpg') }}" class="d-block w-100">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('images/landing/img4.jpg') }}" class="d-block w-100">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('images/landing/img5.jpg') }}" class="d-block w-100">
             </div>
         </div>
     </div>

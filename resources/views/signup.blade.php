@@ -33,7 +33,7 @@
                 <div class="card shadow-lg border-0 rounded w-100 mx-4" style="max-width: 420px;">
                     <div class="card-body p-4">
                         <div class="text-center mb-3">
-                            <img src="{{ asset('images/ispsc_logo.png') }}" alt="ISPSC Logo" class="img-fluid"
+                            <img src="{{ asset('images/smarthire.png') }}" alt="ISPSC Logo" class="img-fluid"
                                 style="max-width: 20%">
                             <h4 class="mt-2">SMARTHIRE Sign Up</h3>
                         </div>

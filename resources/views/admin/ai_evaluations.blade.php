@@ -73,23 +73,24 @@
         <table class="table table-bordered table-hover table-fixed">
             <thead>
                 <tr class="text-center">
-                    <th>Applicant Name</th>
-                    <th>Job Applied</th>
+                    <th>#</th>
+                    <th>Position</th>
                     <th>Campus</th>
                     <th>Department</th>
-                    <th>Recommendation</th>
+                    <th>Applicant</th>
                     <th>Status</th>
+                    <th>Recommendation</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($applications as $index => $app)
                     <tr>
-                        <td>{{ $app->full_name }}</td>
+                        <td class="text-center">{{ $index + 1 }}</td>
                         <td>{{ $app->job->title }}</td>
                         <td>{{ $app->job->campus }}</td>
                         <td>{{ $app->job->department }}</td>
-                        <td>{{ $app->ai_recommendation ?? 'N/A' }}</td>
+                        <td>{{ $app->full_name }}</td>
                         <td>
                             @php
                                 $badgeClass = match ($app->status) {
@@ -101,6 +102,8 @@
                                 };
                             @endphp
                             <span class="badge {{ $badgeClass }}">{{ $app->status }}</span>
+                        </td>
+                        <td>{{ $app->ai_recommendation ?? 'N/A' }}</td>
                         <td>
                             <!-- View AI Summary Modal Trigger -->
                             <button class="btn btn-sm btn-info" data-bs-toggle="modal"
@@ -133,7 +136,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="aiSummaryLabel{{ $app->id }}">
-                                        AI Evaluation Summary - {{ $app->full_name }}
+                                        Evaluation Summary - {{ $app->full_name }}
                                     </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
@@ -141,10 +144,10 @@
                                 <div class="modal-body">
 
                                     {{-- AI Info --}}
+                                    <p><strong>Recommendation:</strong> {{ $app->ai_recommendation ?? 'N/A' }}</p>
                                     <p><strong>Qualification Match:</strong>
                                         {{ $app->qualification_match ? $app->qualification_match . '%' : 'N/A' }}
                                     </p>
-                                    <p><strong>Recommendation:</strong> {{ $app->ai_recommendation ?? 'N/A' }}</p>
                                     <p><strong>Evaluated at:</strong> {{ $app->ai_evaluated_at }}</p>
                                     <hr>
 
