@@ -97,7 +97,7 @@
             <!-- AI EVALUATION -->
             <h5 class="fw-semibold mb-3">Evaluation Summary</h5>
 
-            @if ($application->ai_score !== null)
+            @if ($application->ai_total_score !== null)
                 @php
                     $aiBadge = match ($application->ai_recommendation) {
                         'Accept' => 'bg-success',

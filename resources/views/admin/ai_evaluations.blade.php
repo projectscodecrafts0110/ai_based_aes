@@ -84,7 +84,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($applications as $index => $app)
+                @foreach ($applications as $index => $app)
                     <tr>
                         <td class="text-center">{{ $index + 1 }}</td>
                         <td>{{ $app->job->title }}</td>
@@ -128,134 +128,156 @@
                             </form>
                         </td>
                     </tr>
-
-                    <!-- AI Summary Modal -->
-                    <div class="modal fade" id="aiSummaryModal{{ $app->id }}" tabindex="-1"
-                        aria-labelledby="aiSummaryLabel{{ $app->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="aiSummaryLabel{{ $app->id }}">
-                                        Evaluation Summary - {{ $app->full_name }}
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-
-                                <div class="modal-body">
-
-                                    {{-- AI Info --}}
-                                    <p><strong>Recommendation:</strong> {{ $app->ai_recommendation ?? 'N/A' }}</p>
-                                    <p><strong>Qualification Match:</strong>
-                                        {{ $app->qualification_match ? $app->qualification_match . '%' : 'N/A' }}
-                                    </p>
-                                    <p><strong>Evaluated at:</strong> {{ $app->ai_evaluated_at }}</p>
-                                    <hr>
-
-                                    <p><strong>Justification:</strong></p>
-                                    <p>{!! nl2br(e($app->ai_summary ?? 'No summary available.')) !!}</p>
-
-                                    <hr>
-                                    <p><strong>Uploaded Documents:</strong></p>
-
-                                    @php
-                                        $files = [];
-
-                                        // Single file fields (only if not empty)
-                                        if (!empty($app->application_letter)) {
-                                            $files['Application Letter'] = $app->application_letter;
-                                        }
-
-                                        if (!empty($app->pds)) {
-                                            $files['PDS'] = $app->pds;
-                                        }
-
-                                        if (!empty($app->otr_diploma)) {
-                                            $files['OTR/Diploma'] = $app->otr_diploma;
-                                        }
-
-                                        if (!empty($app->certificate_eligibility)) {
-                                            $files['Certificate Eligibility'] = $app->certificate_eligibility;
-                                        }
-
-                                        // Multiple certificates (array safe)
-                                        if (
-                                            !empty($app->certificates_training) &&
-                                            is_array($app->certificates_training)
-                                        ) {
-                                            foreach ($app->certificates_training as $index => $cert) {
-                                                if (!empty($cert)) {
-                                                    $files['Certificate ' . ($index + 1)] = $cert;
-                                                }
-                                            }
-                                        }
-                                    @endphp
-
-                                    @if (count($files) > 0)
-                                        <div id="carousel{{ $app->id }}" class="carousel slide"
-                                            data-bs-ride="carousel">
-                                            <div class="carousel-inner">
-
-                                                @foreach ($files as $label => $file)
-                                                    @php
-                                                        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-                                                        $fileUrl = asset('storage/' . $file);
-                                                    @endphp
-
-                                                    <div
-                                                        class="carousel-item @if ($loop->first) active @endif">
-                                                        <h6 class="text-center">{{ $label }}</h6>
-
-                                                        @if ($ext === 'pdf')
-                                                            <embed src="{{ $fileUrl }}" type="application/pdf"
-                                                                width="100%" height="500px">
-                                                        @elseif(in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
-                                                            <img src="{{ $fileUrl }}" class="d-block w-100"
-                                                                alt="{{ $label }}">
-                                                        @else
-                                                            <p class="text-center">
-                                                                <a href="{{ $fileUrl }}" target="_blank">
-                                                                    View {{ $label }}
-                                                                </a>
-                                                            </p>
-                                                        @endif
-                                                    </div>
-                                                @endforeach
-
-                                            </div>
-
-                                            {{-- Controls --}}
-                                            @if (count($files) > 1)
-                                                <button class="carousel-control-prev" type="button"
-                                                    data-bs-target="#carousel{{ $app->id }}" data-bs-slide="prev">
-                                                    <span class="carousel-control-prev-icon"></span>
-                                                </button>
-
-                                                <button class="carousel-control-next" type="button"
-                                                    data-bs-target="#carousel{{ $app->id }}" data-bs-slide="next">
-                                                    <span class="carousel-control-next-icon"></span>
-                                                </button>
-                                            @endif
-                                        </div>
-                                    @else
-                                        <p class="text-muted text-center">No documents uploaded.</p>
-                                    @endif
-
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                        Close
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <tr>
-                        <td colspan="5" class="text-center">No job vacancies found.</td>
-                    </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
+
+        {{-- Render all modals after the table --}}
+        @foreach ($applications as $app)
+            <div class="modal fade" id="aiSummaryModal{{ $app->id }}" tabindex="-1"
+                aria-labelledby="aiSummaryLabel{{ $app->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="aiSummaryLabel{{ $app->id }}">
+                                Evaluation Summary - {{ $app->full_name }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            {{-- AI Info --}}
+                            <p><strong>Recommendation:</strong> {{ $app->ai_recommendation ?? 'N/A' }}</p>
+                            <p><strong>Qualification Match:</strong>
+                                {{ $app->qualification_match ? $app->qualification_match . '%' : 'N/A' }}
+                            </p>
+                            <p><strong>Evaluated at:</strong> {{ $app->ai_evaluated_at }}</p>
+                            <hr>
+
+                            <h6><strong>Initial Evaluation Scores</strong></h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm text-center">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Criteria</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Education</td>
+                                            <td>{{ $app->ai_education_score ?? 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Relevant Work Experience</td>
+                                            <td>{{ $app->ai_experience_score ?? 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Training / Seminars</td>
+                                            <td>{{ $app->ai_training_score ?? 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Potential</td>
+                                            <td>{{ $app->ai_potential_score ?? 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Outstanding Accomplishments</td>
+                                            <td>{{ $app->ai_accomplishments_score ?? 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Psychosocial Traits</td>
+                                            <td>{{ $app->ai_psychosocial_score ?? 'N/A' }}</td>
+                                        </tr>
+                                        <tr class="table-success fw-bold">
+                                            <td>AI Total Score</td>
+                                            <td>{{ $app->ai_total_score ?? 'N/A' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <hr>
+                            <p><strong>Justification:</strong></p>
+                            <p>{!! nl2br(e($app->ai_summary ?? 'No summary available.')) !!}</p>
+
+                            <hr>
+                            <p><strong>Uploaded Documents:</strong></p>
+
+                            @php
+                                $files = [];
+
+                                if (!empty($app->application_letter)) {
+                                    $files['Application Letter'] = $app->application_letter;
+                                }
+                                if (!empty($app->pds)) {
+                                    $files['PDS'] = $app->pds;
+                                }
+                                if (!empty($app->otr_diploma)) {
+                                    $files['OTR/Diploma'] = $app->otr_diploma;
+                                }
+                                if (!empty($app->certificate_eligibility)) {
+                                    $files['Certificate Eligibility'] = $app->certificate_eligibility;
+                                }
+
+                                if (!empty($app->certificates_training) && is_array($app->certificates_training)) {
+                                    foreach ($app->certificates_training as $index => $cert) {
+                                        if (!empty($cert)) {
+                                            $files['Certificate ' . ($index + 1)] = $cert;
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @if (count($files) > 0)
+                                <div id="carousel{{ $app->id }}" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        @foreach ($files as $label => $file)
+                                            @php
+                                                $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                                                $fileUrl = asset('storage/' . $file);
+                                            @endphp
+                                            <div class="carousel-item @if ($loop->first) active @endif">
+                                                <h6 class="text-center">{{ $label }}</h6>
+                                                @if ($ext === 'pdf')
+                                                    <embed src="{{ $fileUrl }}" type="application/pdf" width="100%"
+                                                        height="500px">
+                                                @elseif(in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
+                                                    <img src="{{ $fileUrl }}" class="d-block w-100"
+                                                        alt="{{ $label }}">
+                                                @else
+                                                    <p class="text-center">
+                                                        <a href="{{ $fileUrl }}" target="_blank">View
+                                                            {{ $label }}</a>
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    @if (count($files) > 1)
+                                        <button class="carousel-control-prev" type="button"
+                                            data-bs-target="#carousel{{ $app->id }}" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon"></span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button"
+                                            data-bs-target="#carousel{{ $app->id }}" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon"></span>
+                                        </button>
+                                    @endif
+                                </div>
+                            @else
+                                <p class="text-muted text-center">No documents uploaded.</p>
+                            @endif
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </div>
 @endsection

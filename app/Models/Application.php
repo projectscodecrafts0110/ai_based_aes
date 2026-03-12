@@ -33,6 +33,13 @@ class Application extends Model
         'ai_summary',
         'ai_evaluated_at',
         'qualification_match',
+        'ai_education_score',
+        'ai_experience_score',
+        'ai_training_score',
+        'ai_potential_score',
+        'ai_accomplishments_score',
+        'ai_psychosocial_score',
+        'ai_total_score',
     ];
 
 
