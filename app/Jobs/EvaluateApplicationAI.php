@@ -15,91 +15,91 @@ use Illuminate\Support\Facades\Log;
 
 class EvaluateApplicationAI implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+        use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected Application $application;
+        protected Application $application;
 
-    public function __construct(Application $application)
-    {
-        $this->application = $application;
-    }
+        public function __construct(Application $application)
+        {
+                $this->application = $application;
+        }
 
-    public function handle(): void
-    {
-        $app = $this->application->load('job');
+        public function handle(): void
+        {
+                $app = $this->application->load('job');
 
-        /*
+                /*
         =========================================
         1. Extract Applicant Documents
         =========================================
         */
 
-        $applicationLetterText = FileTextExtractor::extract(storage_path('app/public/' . $app->application_letter));
+                $applicationLetterText = FileTextExtractor::extract(storage_path('app/public/' . $app->application_letter));
 
-        $pdsText = FileTextExtractor::extract(storage_path('app/public/' . $app->pds));
+                $pdsText = FileTextExtractor::extract(storage_path('app/public/' . $app->pds));
 
-        $otrDiplomaText = FileTextExtractor::extract(storage_path('app/public/' . $app->otr_diploma));
+                $otrDiplomaText = FileTextExtractor::extract(storage_path('app/public/' . $app->otr_diploma));
 
-        $certificateEligibilityText = $app->certificate_eligibility
-            ? FileTextExtractor::extract(storage_path('app/public/' . $app->certificate_eligibility))
-            : '';
+                $certificateEligibilityText = $app->certificate_eligibility
+                        ? FileTextExtractor::extract(storage_path('app/public/' . $app->certificate_eligibility))
+                        : '';
 
-        $certificatesTrainingText = FileTextExtractor::extractMultiple(
-            array_map(fn($f) => storage_path('app/public/' . $f), $app->certificates_training ?? [])
-        );
+                $certificatesTrainingText = FileTextExtractor::extractMultiple(
+                        array_map(fn($f) => storage_path('app/public/' . $f), $app->certificates_training ?? [])
+                );
 
-        /*
+                /*
         =========================================
         2. Get Allied Courses
         =========================================
         */
 
-        $alliedCourses = AlliedCourse::where('course', $app->job->course)->first();
+                $alliedCourses = AlliedCourse::where('course', $app->job->course)->first();
 
-        $alliedText = $alliedCourses
-            ? implode(', ', $alliedCourses->allied ?? [])
-            : 'No allied courses listed';
+                $alliedText = $alliedCourses
+                        ? implode(', ', $alliedCourses->allied ?? [])
+                        : 'No allied courses listed';
 
-        /*
+                /*
         =========================================
         3. Load Criteria Document
         =========================================
         */
 
-        $criteriaPath = public_path('criteria/' . (
-            $app->job->job_type === 'teaching'
-            ? 'teaching_criteria.docx'
-            : 'non_teaching_criteria.docx'
-        ));
+                $criteriaPath = public_path('criteria/' . (
+                        $app->job->job_type === 'teaching'
+                        ? 'teaching_criteria.docx'
+                        : 'non_teaching_criteria.docx'
+                ));
 
-        $criteriaText = FileTextExtractor::extract($criteriaPath);
+                $criteriaText = FileTextExtractor::extract($criteriaPath);
 
-        /*
+                /*
         =========================================
         4. Job Qualifications
         =========================================
         */
 
-        $qualifications = $app->job->qualifications;
+                $qualifications = $app->job->qualifications;
 
-        if (is_string($qualifications)) {
-            $qualifications = json_decode($qualifications, true);
-        }
+                if (is_string($qualifications)) {
+                        $qualifications = json_decode($qualifications, true);
+                }
 
-        $formattedQualifications = "
+                $formattedQualifications = "
 Education: " . ($qualifications['education'] ?? 'N/A') . "
 Experience: " . ($qualifications['experience'] ?? 'N/A') . "
 Training: " . ($qualifications['training'] ?? 'N/A') . "
 Eligibility: " . ($qualifications['eligibility'] ?? 'N/A') . "
 ";
 
-        /*
+                /*
         =========================================
         5. AI Prompt
         =========================================
         */
 
-        $prompt = <<<PROMPT
+                $prompt = <<<PROMPT
 
 You are an AI recruitment evaluator.
 
@@ -354,7 +354,7 @@ Psychosocial Score: <number>
 
 AI Total Score: <number (total of 65 for teaching, 45 for non-teaching)>
 
-Recommendation: <Highly Recommended | Consider | Rejected>
+Recommendation: <Recommended | Consider | Rejected>
 
 Qualification Match: <number 0.00-100.00>
 
@@ -372,157 +372,157 @@ Overall Assessment: <text>
 
 PROMPT;
 
-        /*
+                /*
         =========================================
         6. Call GPT
         =========================================
         */
 
-        $response = OpenAI::responses()->create([
-            'model' => 'gpt-4o',
-            'input' => $prompt,
-        ]);
+                $response = OpenAI::responses()->create([
+                        'model' => 'gpt-4o',
+                        'input' => $prompt,
+                ]);
 
-        $resultText = trim($response->output[0]->content[0]->text ?? '');
+                $resultText = trim($response->output[0]->content[0]->text ?? '');
 
-        Log::info("AI Evaluation Result for Application {$app->id}: " . $resultText);
+                Log::info("AI Evaluation Result for Application {$app->id}: " . $resultText);
 
-        /*
+                /*
 =========================================
 7. Parse Scores
 =========================================
 */
 
-        $education = null;
-        $experience = null;
-        $training = null;
-        $potential = null;
-        $accomplishments = null;
-        $psychosocial = null;
-        $total = null;
-        $recommendation = null;
-        $justification = null;
-        $qualificationMatch = null;
+                $education = null;
+                $experience = null;
+                $training = null;
+                $potential = null;
+                $accomplishments = null;
+                $psychosocial = null;
+                $total = null;
+                $recommendation = null;
+                $justification = null;
+                $qualificationMatch = null;
 
-        /*
+                /*
 -----------------------------------------
 Clean markdown from GPT output
 -----------------------------------------
 */
 
-        $resultText = preg_replace('/\*\*/', '', $resultText);
+                $resultText = preg_replace('/\*\*/', '', $resultText);
 
-        /*
+                /*
 -----------------------------------------
 Education Score
 -----------------------------------------
 */
 
-        preg_match('/Education Score:\s*(\d+)/i', $resultText, $match);
-        $education = $match[1] ?? null;
+                preg_match('/Education Score:\s*(\d+)/i', $resultText, $match);
+                $education = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 Experience Score
 -----------------------------------------
 */
 
-        preg_match('/Experience Score:\s*(\d+)/i', $resultText, $match);
-        $experience = $match[1] ?? null;
+                preg_match('/Experience Score:\s*(\d+)/i', $resultText, $match);
+                $experience = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 Training Score
 -----------------------------------------
 */
 
-        preg_match('/Training Score:\s*(\d+)/i', $resultText, $match);
-        $training = $match[1] ?? null;
+                preg_match('/Training Score:\s*(\d+)/i', $resultText, $match);
+                $training = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 Potential Score
 -----------------------------------------
 */
 
-        preg_match('/Potential Score:\s*(\d+)/i', $resultText, $match);
-        $potential = $match[1] ?? null;
+                preg_match('/Potential Score:\s*(\d+)/i', $resultText, $match);
+                $potential = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 Accomplishments Score
 -----------------------------------------
 */
 
-        preg_match('/Accomplishments Score:\s*(\d+)/i', $resultText, $match);
-        $accomplishments = $match[1] ?? null;
+                preg_match('/Accomplishments Score:\s*(\d+)/i', $resultText, $match);
+                $accomplishments = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 Psychosocial Score
 -----------------------------------------
 */
 
-        preg_match('/Psychosocial Score:\s*(\d+)/i', $resultText, $match);
-        $psychosocial = $match[1] ?? null;
+                preg_match('/Psychosocial Score:\s*(\d+)/i', $resultText, $match);
+                $psychosocial = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 AI Total Score (supports "27/65")
 -----------------------------------------
 */
 
-        preg_match('/AI Total Score:\s*(\d+)/i', $resultText, $match);
-        $total = $match[1] ?? null;
+                preg_match('/AI Total Score:\s*(\d+)/i', $resultText, $match);
+                $total = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 Recommendation
 -----------------------------------------
 */
 
-        preg_match('/Recommendation:\s*(Highly Recommended|Consider|Rejected)/i', $resultText, $match);
-        $recommendation = $match[1] ?? null;
+                preg_match('/Recommendation:\s*(Highly Recommended|Consider|Rejected)/i', $resultText, $match);
+                $recommendation = $match[1] ?? null;
 
-        /*
+                /*
 -----------------------------------------
 Qualification Match
 -----------------------------------------
 */
 
-        preg_match('/Qualification Match\s*:\s*(\d{1,3}(?:\.\d+)?)/i', $resultText, $match);
+                preg_match('/Qualification Match\s*:\s*(\d{1,3}(?:\.\d+)?)/i', $resultText, $match);
 
-        if (isset($match[1])) {
-            $qualificationMatch = min(100, max(0, (float)$match[1]));
-        }
+                if (isset($match[1])) {
+                        $qualificationMatch = min(100, max(0, (float)$match[1]));
+                }
 
-        /*
+                /*
 -----------------------------------------
 Justification
 -----------------------------------------
 */
 
-        preg_match('/Justification:\s*(.+)$/is', $resultText, $match);
-        $justification = trim($match[1] ?? '');
+                preg_match('/Justification:\s*(.+)$/is', $resultText, $match);
+                $justification = trim($match[1] ?? '');
 
-        /*
+                /*
         =========================================
         8. Save to Database
         =========================================
         */
 
-        $app->update([
-            'ai_education_score' => $education,
-            'ai_experience_score' => $experience,
-            'ai_training_score' => $training,
-            'ai_potential_score' => $potential,
-            'ai_accomplishments_score' => $accomplishments,
-            'ai_psychosocial_score' => $psychosocial,
-            'ai_total_score' => $total,
-            'ai_recommendation' => $recommendation,
-            'ai_summary' => $justification,
-            'ai_evaluated_at' => now(),
-            'qualification_match' => $qualificationMatch
-        ]);
-    }
+                $app->update([
+                        'ai_education_score' => $education,
+                        'ai_experience_score' => $experience,
+                        'ai_training_score' => $training,
+                        'ai_potential_score' => $potential,
+                        'ai_accomplishments_score' => $accomplishments,
+                        'ai_psychosocial_score' => $psychosocial,
+                        'ai_total_score' => $total,
+                        'ai_recommendation' => $recommendation,
+                        'ai_summary' => $justification,
+                        'ai_evaluated_at' => now(),
+                        'qualification_match' => $qualificationMatch
+                ]);
+        }
 }
